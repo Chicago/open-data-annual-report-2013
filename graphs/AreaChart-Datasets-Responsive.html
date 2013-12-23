@@ -1,34 +1,33 @@
 <!-- 
 
-Based off of http://bl.ocks.org/mbostock/3902569 	/* ALTERATION */
+Based off of http://bl.ocks.org/mbostock/3902569 	
 
 --!> 
 
-
-
-
-
 <!DOCTYPE html>
 <meta charset="utf-8">
+<head> 
+
 <style>
 
 body {
-  font: 18px sans-serif;
+  font-size: 16px;
+  font-family: sans-serif;
   fill: #212121;
-  background-color:transparent;
+  background-color:transparent; 					
 }
 
 .axis path,
 .axis line {
   fill: none;
-  stroke: white;
-  stroke-width: 2px;
+  stroke: #333333;
+  stroke-width: 1.2px;
   shape-rendering: crispEdges;
+  opacity: 0.4;
 }
 
-
 .area{
-  fill: #ffffff;
+  fill: #ffffff;										
   stroke-width: 0;
 }
 
@@ -43,21 +42,26 @@ body {
 }
 
 .focus text {
-	font: 20px sans-serif;
+	font-size: 20px;
+	font-family: sans-serif;
 } 
+
 </style>
+
+</head>
+
 <body>
 <script src="http://d3js.org/d3.v3.js"></script>
 <script>
 
 var margin = {top: 20, right: 50, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 960,
+    height = 500;
 
 var parseDate = d3.time.format("%d-%b-%y").parse,
     bisectDate = d3.bisector(function(d) { return d.date; }).left,
-    formatValue = d3.format(",.2f"),
-    formatCurrency = function(d) { return "Month, Year " + formatValue(d) + " TB" ;};
+    formatValue = d3.format(",.0f"),
+    formatShowValues = function(d) { return "Month " + formatValue(d) + " Datasets" ;};
 
 var x = d3.time.scale()
     .range([0, width]);
@@ -79,17 +83,16 @@ var area = d3.svg.area()
     .x(function(d) { return x(d.date); })
     .y0(height)
     .y1(function(d) { return y(d.close); });
-    
-															//Note that dataset #s is stored in variable "close"
+ 														// Note that dataset #s is stored in variable "close"
 
- 
+
 var svg = d3.select("body").append("svg")
-    .attr("viewBox", "0 0 1000 1000")
-    .attr("preserveAspectRatio", "meet")
+    .attr("viewBox", "0 0 1000 1000") 
+    .attr("preserveAspectRatio", "meet") 
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data-TB.csv", function(error, data) {
+d3.csv("data-datasets.csv", function(error, data) {
   data.forEach(function(d) {
     d.date = parseDate(d.date);
     d.close = +d.close;
@@ -115,7 +118,7 @@ d3.csv("data-TB.csv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text ("	2010");
+      .text ("2011");
 
   svg.append("g")
       .attr("class", "y axis")
@@ -152,7 +155,7 @@ d3.csv("data-TB.csv", function(error, data) {
         d1 = data[i],
         d = x0 - d0.date > d1.date - x0 ? d1 : d0;
     focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-    focus.select("text").text(formatCurrency(d.close) + " " );
+    focus.select("text").text(formatShowValues(d.close) + " " );
   }
 });
 

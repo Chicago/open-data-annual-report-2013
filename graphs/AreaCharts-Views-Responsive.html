@@ -22,10 +22,9 @@ body {
 .axis line {
   fill: none;
   stroke: white;
-  stroke-width: 2px;
+  stroke-width: 1.8px;
   shape-rendering: crispEdges;
 }
-
 
 .area{
   fill: #ffffff;
@@ -46,18 +45,20 @@ body {
 	font: 20px sans-serif;
 } 
 </style>
+
+
 <body>
 <script src="http://d3js.org/d3.v3.js"></script>
 <script>
 
-var margin = {top: 20, right: 50, bottom: 30, left: 50},
+var margin = {top: 20, right: 50, bottom: 30, left: 70},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var parseDate = d3.time.format("%d-%b-%y").parse,
     bisectDate = d3.bisector(function(d) { return d.date; }).left,
-    formatValue = d3.format(",.2f"),
-    formatCurrency = function(d) { return "Month, Year " + formatValue(d) + " TB" ;};
+    formatValue = d3.format(",.0f"),
+    formatCurrency = function(d) { return "Month " + formatValue(d) + " Views" ;};
 
 var x = d3.time.scale()
     .range([0, width]);
@@ -79,8 +80,7 @@ var area = d3.svg.area()
     .x(function(d) { return x(d.date); })
     .y0(height)
     .y1(function(d) { return y(d.close); });
-    
-															//Note that dataset #s is stored in variable "close"
+ 													// Note that dataset #s is stored in variable "close"
 
  
 var svg = d3.select("body").append("svg")
@@ -89,7 +89,7 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data-TB.csv", function(error, data) {
+d3.csv("data-views.csv", function(error, data) {
   data.forEach(function(d) {
     d.date = parseDate(d.date);
     d.close = +d.close;
@@ -115,7 +115,7 @@ d3.csv("data-TB.csv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text ("	2010");
+      .text ("2010");
 
   svg.append("g")
       .attr("class", "y axis")
