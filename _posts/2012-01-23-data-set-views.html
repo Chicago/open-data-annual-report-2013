@@ -7,20 +7,14 @@ extrapadding: 100px
 ---
 <div class="row-fluid">
   <div class="span12">
-    <p class="blurb">As of the end of 2013, the data portal contains 514 datasets across a range of categories. Within the past year, the portal added 47 new datasets, a 10 percent rate of growth. However, past years have seen even a greater increase. During 2012, the portal grew from 205 datasets to 460, a 125 percent increase.</p>
-  </div>
-</div>
-<div class="chart">
+    <p class="blurb">There have been nearly 2.9 million views of the data portal. With the rise in the number of datasets, there is a corresponding increase in the popularity. Throughout 2013, the data portal averaged 109,533 visitors per month, compared to an average 80,039 through 2012. Yet, the largest number of visitors in a single month was in June 2011 when the City released a comprehensive dataset of crimes.</p>
+<div id="chart-views">
 <script>
 
-// var margin = {top: 20, right: 50, bottom: 30, left: 70},
-//     width = 960 - margin.left - margin.right,
-//     height = 500 - margin.top - margin.bottom;
-
-// var parseDate = d3.time.format("%d-%b-%y").parse,
-//     bisectDate = d3.bisector(function(d) { return d.date; }).left,
-//     formatValue = d3.format(",.0f"),
-//     formatCurrency = function(d) { return "Month " + formatValue(d) + " Views" ;};
+var parseDate = d3.time.format("%d-%b-%y").parse,
+     bisectDate = d3.bisector(function(d) { return d.date; }).left,
+     formatValue = d3.format(",.0f"),
+     formatShowViews = function(d) { return formatValue(d) + " Views" ;};
 
 // var x = d3.time.scale()
 //     .range([0, width]);
@@ -45,78 +39,80 @@ extrapadding: 100px
 //  													// Note that dataset #s is stored in variable "close"
 
  
-var chartViews = d3.select(".chart").append("svg")
-    .attr("viewBox", "0 0 1000 1000")
-    .attr("preserveAspectRatio", "meet")
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var chartViews = d3.select("#chart-views").append("svg")
+     .attr("viewBox", "0 0 1040 1040")
+     .attr("preserveAspectRatio", "meet")
+     .append("g")
+     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data/data-views.csv", function(error, data) {
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
-    d.close = +d.close;
-  });
+ d3.csv("data/data-views.csv", function(error, data) {
+   data.forEach(function(d) {
+     d.date = parseDate(d.date);
+     d.value = +d.value;
+   });
 
-  data.sort(function(a, b) {
-    return a.date - b.date;
-  });
+   data.sort(function(a, b) {
+     return a.date - b.date;
+   });
 
-  x.domain([data[0].date, data[data.length - 1].date]);
-  y.domain(d3.extent(data, function(d) { return d.close; }));
+   x.domain([data[0].date, data[data.length - 1].date]);
+   y.domain(d3.extent(data, function(d) { return d.value; }));
 
-  chartViews.append("path")
-      .datum(data)
-      .attr("class", "area")
-      .attr("d", area);
+   chartViews.append("path")
+       .datum(data)
+       .attr("class", "area")
+       .attr("d", area);
       
-  chartViews.append("g")
-      .attr("class", "xaxis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .append("text")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text ("2010");
+   chartViews.append("g")
+       .attr("class", "xaxis")
+       .attr("transform", "translate(0," + height + ")")
+       .call(xAxis)
+       .append("text")
+       .attr("y", 6)
+       .attr("dy", ".71em")
+       .style("text-anchor", "end")
+       .text ("2010");
 
-  chartViews.append("g")
-      .attr("class", "yaxis")
-      .call(yAxis)
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end");
+   chartViews.append("g")
+       .attr("class", "yaxis")
+       .call(yAxis)
+       .append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("y", 6)
+       .attr("dy", ".71em")
+       .style("text-anchor", "end");
 
-  var focusViews = chartViews.append("g")
-      .attr("class", "focus")
-      .style("display", "none");
+   var focusViews = chartViews.append("g")
+       .attr("class", "focus")
+       .style("display", "none");
 
-  focusViews.append("circle")
-      .attr("r", 4.5);
+   focusViews.append("circle")
+       .attr("r", 4.5);
 
-  focusViews.append("text")
-      .attr("x", 9)
-      .attr("dy", ".35em");
+   focusViews.append("text")
+       .attr("x", 9)
+       .attr("dy", ".35em");
 
-  chartViews.append("rect")
-      .attr("class", "overlay")
-      .attr("width", width)
-      .attr("height", height)
-      .on("mouseover", function() { focusViews.style("display", null); })
-      .on("mouseout", function() { focusViews.style("display", "none"); })
-      .on("mousemove", viewsMouseMove);
+   chartViews.append("rect")
+       .attr("class", "overlay")
+       .attr("width", width)
+       .attr("height", height)
+       .on("mouseover", function() { focusViews.style("display", null); })
+       .on("mouseout", function() { focusViews.style("display", "none"); })
+       .on("mousemove", viewsMouseMove);
 
-  function viewsMouseMove() {
-    var x0 = x.invert(d3.mouse(this)[0]),
-        i = bisectDate(data, x0, 1),
-        d0 = data[i - 1],
-        d1 = data[i],
-        d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-    focusViews.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-    focusViews.select("text").text(formatCurrency(d.close) + " " );
-  }
-});
+   function viewsMouseMove() {
+     var x0 = x.invert(d3.mouse(this)[0]),
+         i = bisectDate(data, x0, 1),
+         d0 = data[i - 1],
+         d1 = data[i],
+         d = x0 - d0.date > d1.date - d1 ? d1 : d0;
+     focusViews.attr("transform", "translate(" + x(d.date) + "," + y(d.value) + ")");
+     focusViews.select("text").text(formatShowViews(d.value) + " " );
+   }
+ });
 
-</script>
+ </script>
+</div>
+</div>
 </div>

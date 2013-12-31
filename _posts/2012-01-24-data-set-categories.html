@@ -9,19 +9,17 @@ extrapadding: 100px
 <div class="row-fluid">
   <div class="span12">
     <p class="blurb">As of the end of 2013, the data portal contains 514 datasets across a range of categories. Within the past year, the portal added 47 new datasets, a 10 percent rate of growth. However, past years have seen even a greater increase. During 2012, the portal grew from 205 datasets to 460, a 125 percent increase.</p>
-  </div>
-</div>
-<div class="chart">
+<div id="chart-datasets">
   <script>
 
-    var margin = {top: 20, right: 50, bottom: 30, left: 50},
-        width = 960,
+    var margin = {top: 20, right: 50, bottom: 30, left: 80},
+        width = 900,
         height = 500;
 
     var parseDate = d3.time.format("%d-%b-%y").parse,
         bisectDate = d3.bisector(function(d) { return d.date; }).left,
         formatValue = d3.format(",.0f"),
-        formatShowValues = function(d) { return "Month " + formatValue(d) + " Datasets" ;};
+        formatShowDatasets = function(d) { return formatValue(d) + " Datasets" ;};
 
     var x = d3.time.scale()
         .range([0, width]);
@@ -42,11 +40,11 @@ extrapadding: 100px
     var area = d3.svg.area()
         .x(function(d) { return x(d.date); })
         .y0(height)
-        .y1(function(d) { return y(d.close); });
+        .y1(function(d) { return y(d.value); });
      														// Note that dataset #s is stored in variable "close"
 
 
-    var chartDataset = d3.select(".chart").append("svg")
+    var chartDataset = d3.select("#chart-datasets").append("svg")
         .attr("viewBox", "0 0 1000 1000") 
         .attr("preserveAspectRatio", "meet") 
         .append("g")
@@ -55,7 +53,7 @@ extrapadding: 100px
     d3.csv("data/data-datasets.csv", function(error, data) {
       data.forEach(function(d) {
         d.date = parseDate(d.date);
-        d.close = +d.close;
+        d.value = +d.value;
       });
 
       data.sort(function(a, b) {
@@ -63,7 +61,7 @@ extrapadding: 100px
       });
 
       x.domain([data[0].date, data[data.length - 1].date]);
-      y.domain(d3.extent(data, function(d) { return d.close; }));
+      y.domain(d3.extent(data, function(d) { return d.value; }));
 
       chartDataset.append("path")
           .datum(data)
@@ -94,7 +92,7 @@ extrapadding: 100px
           .style("display", "none");
 
       focusDataset.append("circle")
-          .attr("r", 1);
+          .attr("r", 4.5);
 
       focusDataset.append("text")
           .attr("x", 9)
@@ -109,15 +107,17 @@ extrapadding: 100px
           .on("mousemove", datasetMouseMove);
 
       function datasetMouseMove() {
-        var x0 = x.invert(d3.mouse(this)[0]),
-            i = bisectDate(data, x0, 1),
-            d0 = data[i - 1],
-            d1 = data[i],
-            d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-        focusDataset.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-        focusDataset.select("text").text(formatShowValues(d.close) + " " );
+        var x1 = x.invert(d3.mouse(this)[0]),
+            j = bisectDate(data, x1, 1),
+            e0 = data[j - 1],
+            e1 = data[j],
+            e = x1 - e0.date > e1.date - e1 ? e1 : e0;
+        focusDataset.attr("transform", "translate(" + x(e.date) + "," + y(e.value) + ")");
+        focusDataset.select("text").text(formatShowDatasets(e.value) + " " );
       }
     });
 
   </script>
+    </div>
+  </div>
 </div>

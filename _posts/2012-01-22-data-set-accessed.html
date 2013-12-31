@@ -1,7 +1,98 @@
 ---
 layout: fullpage
-title: Open<br />Data Portal
+title: Total Data<br />Accessed in terabytes
 bgcolor: 558ED5
 pagetype: story
 extrapadding: 100px
 ---
+
+<div class="row-fluid">
+  <div class="span12">
+    <p class="blurb">As datasets increased, the total amount of data downloaded and viewed on the portal has significantly increased. In November 2013, 6.4 terabytes of data were accessed on the portal. One year ago, only 2.0 terabytes were viewed or downloaded.</p>
+<div id="chart-accessed">
+  <script>
+
+
+	var parseDate = d3.time.format("%d-%b-%y").parse,
+	     bisectDate = d3.bisector(function(d) { return d.date; }).left,
+	     formatValue = d3.format(",.1f"),
+	     formatDate = d3.time.format("%B"),
+	     formatShowAccessed = function(d) { return formatDate(d.date) + " : " + formatValue(d.value) + " TB accessed" ;};
+
+    var chartAccessed = d3.select("#chart-accessed").append("svg")
+        .attr("viewBox", "0 0 1000 1000") 
+        .attr("preserveAspectRatio", "meet") 
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.csv("data/data-TB.csv", function(error, data) {
+      data.forEach(function(d) {
+        d.date = parseDate(d.date);
+        d.value = +d.value;
+      });
+
+      data.sort(function(a, b) {
+        return a.date - b.date;
+      });
+
+      x.domain([data[0].date, data[data.length - 1].date]);
+      y.domain(d3.extent(data, function(d) { return d.value; }));
+
+      chartAccessed.append("path")
+          .datum(data)
+          .attr("class", "area")
+          .attr("d", area);
+          
+      chartAccessed.append("g")
+          .attr("class", "xaxis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+          .append("text")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text ("2010");
+
+      chartAccessed.append("g")
+          .attr("class", "yaxis")
+          .call(yAxis)
+          .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end");
+
+      var focusAccessed = chartAccessed.append("g")
+          .attr("class", "focus")
+          .style("display", "none");
+
+      focusAccessed.append("circle")
+          .attr("r", 4.5);
+
+      focusAccessed.append("text")
+          .attr("x", 9)
+          .attr("dy", ".35em");
+
+      chartAccessed.append("rect")
+          .attr("class", "overlay")
+          .attr("width", width)
+          .attr("height", height)
+          .on("mouseover", function() { focusAccessed.style("display", null); })
+          .on("mouseout", function() { focusAccessed.style("display", "none"); })
+          .on("mousemove", accessedMouseMove);
+
+      function accessedMouseMove() {
+        var x1 = x.invert(d3.mouse(this)[0]),
+            j = bisectDate(data, x1, 1),
+            e0 = data[j - 1],
+            e1 = data[j],
+            e = x1 - e0.date > e1.date - e1 ? e1 : e0;
+        focusAccessed.attr("transform", "translate(" + x(e.date) + "," + y(e.value) + ")");
+        focusAccessed.select("text").text(formatShowAccessed(e) + " " );
+      }
+    });
+
+  </script>
+    </div>
+  </div>
+</div>
