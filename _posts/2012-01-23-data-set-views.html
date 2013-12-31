@@ -1,7 +1,122 @@
 ---
 layout: fullpage
-title: Open<br />Data Portal
+title: Number of<br />Views
 bgcolor: 558ED5
 pagetype: story
 extrapadding: 100px
 ---
+<div class="row-fluid">
+  <div class="span12">
+    <p class="blurb">As of the end of 2013, the data portal contains 514 datasets across a range of categories. Within the past year, the portal added 47 new datasets, a 10 percent rate of growth. However, past years have seen even a greater increase. During 2012, the portal grew from 205 datasets to 460, a 125 percent increase.</p>
+  </div>
+</div>
+<div class="chart">
+<script>
+
+// var margin = {top: 20, right: 50, bottom: 30, left: 70},
+//     width = 960 - margin.left - margin.right,
+//     height = 500 - margin.top - margin.bottom;
+
+// var parseDate = d3.time.format("%d-%b-%y").parse,
+//     bisectDate = d3.bisector(function(d) { return d.date; }).left,
+//     formatValue = d3.format(",.0f"),
+//     formatCurrency = function(d) { return "Month " + formatValue(d) + " Views" ;};
+
+// var x = d3.time.scale()
+//     .range([0, width]);
+
+// var y = d3.scale.linear()
+//     .range([height, 0]);
+
+// var xAxis = d3.svg.axis()
+//     .scale(x)
+//     .orient("bottom")
+//     .ticks(3);
+
+// var yAxis = d3.svg.axis()
+//     .scale(y)
+//     .orient("left")
+//     .tickSize(-width).tickSubdivide(true);
+
+// var area = d3.svg.area()
+//     .x(function(d) { return x(d.date); })
+//     .y0(height)
+//     .y1(function(d) { return y(d.close); });
+//  													// Note that dataset #s is stored in variable "close"
+
+ 
+var chartViews = d3.select(".chart").append("svg")
+    .attr("viewBox", "0 0 1000 1000")
+    .attr("preserveAspectRatio", "meet")
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("data/data-views.csv", function(error, data) {
+  data.forEach(function(d) {
+    d.date = parseDate(d.date);
+    d.close = +d.close;
+  });
+
+  data.sort(function(a, b) {
+    return a.date - b.date;
+  });
+
+  x.domain([data[0].date, data[data.length - 1].date]);
+  y.domain(d3.extent(data, function(d) { return d.close; }));
+
+  chartViews.append("path")
+      .datum(data)
+      .attr("class", "area")
+      .attr("d", area);
+      
+  chartViews.append("g")
+      .attr("class", "xaxis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .append("text")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text ("2010");
+
+  chartViews.append("g")
+      .attr("class", "yaxis")
+      .call(yAxis)
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end");
+
+  var focusViews = chartViews.append("g")
+      .attr("class", "focus")
+      .style("display", "none");
+
+  focusViews.append("circle")
+      .attr("r", 4.5);
+
+  focusViews.append("text")
+      .attr("x", 9)
+      .attr("dy", ".35em");
+
+  chartViews.append("rect")
+      .attr("class", "overlay")
+      .attr("width", width)
+      .attr("height", height)
+      .on("mouseover", function() { focusViews.style("display", null); })
+      .on("mouseout", function() { focusViews.style("display", "none"); })
+      .on("mousemove", viewsMouseMove);
+
+  function viewsMouseMove() {
+    var x0 = x.invert(d3.mouse(this)[0]),
+        i = bisectDate(data, x0, 1),
+        d0 = data[i - 1],
+        d1 = data[i],
+        d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+    focusViews.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
+    focusViews.select("text").text(formatCurrency(d.close) + " " );
+  }
+});
+
+</script>
+</div>

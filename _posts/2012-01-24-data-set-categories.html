@@ -1,115 +1,123 @@
 ---
 layout: fullpage
-title: Open<br />Data Portal
+title: Cumulative Number<br />of Datasets
 bgcolor: 558ED5
 pagetype: story
 extrapadding: 100px
 ---
-<script>
 
-var margin = {top: 20, right: 50, bottom: 30, left: 50},
-    width = 960,
-    height = 500;
+<div class="row-fluid">
+  <div class="span12">
+    <p class="blurb">As of the end of 2013, the data portal contains 514 datasets across a range of categories. Within the past year, the portal added 47 new datasets, a 10 percent rate of growth. However, past years have seen even a greater increase. During 2012, the portal grew from 205 datasets to 460, a 125 percent increase.</p>
+  </div>
+</div>
+<div class="chart">
+  <script>
 
-var parseDate = d3.time.format("%d-%b-%y").parse,
-    bisectDate = d3.bisector(function(d) { return d.date; }).left,
-    formatValue = d3.format(",.0f"),
-    formatShowValues = function(d) { return "Month " + formatValue(d) + " Datasets" ;};
+    var margin = {top: 20, right: 50, bottom: 30, left: 50},
+        width = 960,
+        height = 500;
 
-var x = d3.time.scale()
-    .range([0, width]);
+    var parseDate = d3.time.format("%d-%b-%y").parse,
+        bisectDate = d3.bisector(function(d) { return d.date; }).left,
+        formatValue = d3.format(",.0f"),
+        formatShowValues = function(d) { return "Month " + formatValue(d) + " Datasets" ;};
 
-var y = d3.scale.linear()
-    .range([height, 0]);
+    var x = d3.time.scale()
+        .range([0, width]);
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom")
-    .ticks(3);
+    var y = d3.scale.linear()
+        .range([height, 0]);
 
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickSize(-width).tickSubdivide(true);
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        .ticks(3);
 
-var area = d3.svg.area()
-    .x(function(d) { return x(d.date); })
-    .y0(height)
-    .y1(function(d) { return y(d.close); });
- 														// Note that dataset #s is stored in variable "close"
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .tickSize(-width).tickSubdivide(true);
+
+    var area = d3.svg.area()
+        .x(function(d) { return x(d.date); })
+        .y0(height)
+        .y1(function(d) { return y(d.close); });
+     														// Note that dataset #s is stored in variable "close"
 
 
-var svg = d3.select("body").append("svg")
-    .attr("viewBox", "0 0 1000 1000") 
-    .attr("preserveAspectRatio", "meet") 
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var chartDataset = d3.select(".chart").append("svg")
+        .attr("viewBox", "0 0 1000 1000") 
+        .attr("preserveAspectRatio", "meet") 
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data-datasets.csv", function(error, data) {
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
-    d.close = +d.close;
-  });
+    d3.csv("data/data-datasets.csv", function(error, data) {
+      data.forEach(function(d) {
+        d.date = parseDate(d.date);
+        d.close = +d.close;
+      });
 
-  data.sort(function(a, b) {
-    return a.date - b.date;
-  });
+      data.sort(function(a, b) {
+        return a.date - b.date;
+      });
 
-  x.domain([data[0].date, data[data.length - 1].date]);
-  y.domain(d3.extent(data, function(d) { return d.close; }));
+      x.domain([data[0].date, data[data.length - 1].date]);
+      y.domain(d3.extent(data, function(d) { return d.close; }));
 
-  svg.append("path")
-      .datum(data)
-      .attr("class", "area")
-      .attr("d", area);
-      
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .append("text")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text ("2011");
+      chartDataset.append("path")
+          .datum(data)
+          .attr("class", "area")
+          .attr("d", area);
+          
+      chartDataset.append("g")
+          .attr("class", "xaxis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+          .append("text")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text ("2011");
 
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end");
+      chartDataset.append("g")
+          .attr("class", "yaxis")
+          .call(yAxis)
+          .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end");
 
-  var focus = svg.append("g")
-      .attr("class", "focus")
-      .style("display", "none");
+      var focusDataset = chartDataset.append("g")
+          .attr("class", "focus")
+          .style("display", "none");
 
-  focus.append("circle")
-      .attr("r", 4.5);
+      focusDataset.append("circle")
+          .attr("r", 1);
 
-  focus.append("text")
-      .attr("x", 9)
-      .attr("dy", ".35em");
+      focusDataset.append("text")
+          .attr("x", 9)
+          .attr("dy", ".35em");
 
-  svg.append("rect")
-      .attr("class", "overlay")
-      .attr("width", width)
-      .attr("height", height)
-      .on("mouseover", function() { focus.style("display", null); })
-      .on("mouseout", function() { focus.style("display", "none"); })
-      .on("mousemove", mousemove);
+      chartDataset.append("rect")
+          .attr("class", "overlay")
+          .attr("width", width)
+          .attr("height", height)
+          .on("mouseover", function() { focusDataset.style("display", null); })
+          .on("mouseout", function() { focusDataset.style("display", "none"); })
+          .on("mousemove", datasetMouseMove);
 
-  function mousemove() {
-    var x0 = x.invert(d3.mouse(this)[0]),
-        i = bisectDate(data, x0, 1),
-        d0 = data[i - 1],
-        d1 = data[i],
-        d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-    focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-    focus.select("text").text(formatShowValues(d.close) + " " );
-  }
-});
+      function datasetMouseMove() {
+        var x0 = x.invert(d3.mouse(this)[0]),
+            i = bisectDate(data, x0, 1),
+            d0 = data[i - 1],
+            d1 = data[i],
+            d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+        focusDataset.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
+        focusDataset.select("text").text(formatShowValues(d.close) + " " );
+      }
+    });
 
-</script>
+  </script>
+</div>

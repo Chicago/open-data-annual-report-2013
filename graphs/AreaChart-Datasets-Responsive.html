@@ -17,17 +17,40 @@ body {
   background-color:transparent; 					
 }
 
-.axis path,
-.axis line {
+.chart {
+  font-size: 16px;
+  font-family: sans-serif;
+  fill: #212121;
+  background-color:transparent;           
+}
+
+.xaxis path,
+.xaxis line {
   fill: none;
   stroke: #333333;
   stroke-width: 1.2px;
   shape-rendering: crispEdges;
   opacity: 0.4;
 }
+.xaxis text {
+  font-family: sans-serif;
+  font-size: 11px;
+  fill: white;
+}
+
+.yaxis path,
+.yaxis line {
+  fill: none;
+  stroke: none;
+}
+.yaxis text {
+  font-family: sans-serif;
+  font-size: 11px;
+  color: white;
+}
 
 .area{
-  fill: #ffffff;										
+  fill: #002060;										
   stroke-width: 0;
 }
 
@@ -51,6 +74,8 @@ body {
 </head>
 
 <body>
+
+<div class="chart">
 <script src="http://d3js.org/d3.v3.js"></script>
 <script>
 
@@ -86,7 +111,7 @@ var area = d3.svg.area()
  														// Note that dataset #s is stored in variable "close"
 
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select(".chart").append("svg")
     .attr("viewBox", "0 0 1000 1000") 
     .attr("preserveAspectRatio", "meet") 
     .append("g")
@@ -111,7 +136,7 @@ d3.csv("data-datasets.csv", function(error, data) {
       .attr("d", area);
       
   svg.append("g")
-      .attr("class", "x axis")
+      .attr("class", "xaxis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
       .append("text")
@@ -121,7 +146,7 @@ d3.csv("data-datasets.csv", function(error, data) {
       .text ("2011");
 
   svg.append("g")
-      .attr("class", "y axis")
+      .attr("class", "yaxis")
       .call(yAxis)
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -129,14 +154,14 @@ d3.csv("data-datasets.csv", function(error, data) {
       .attr("dy", ".71em")
       .style("text-anchor", "end");
 
-  var focus = svg.append("g")
+  var focusa = svg.append("g")
       .attr("class", "focus")
       .style("display", "none");
 
-  focus.append("circle")
+  focusa.append("circle")
       .attr("r", 4.5);
 
-  focus.append("text")
+  focusa.append("text")
       .attr("x", 9)
       .attr("dy", ".35em");
 
@@ -144,8 +169,8 @@ d3.csv("data-datasets.csv", function(error, data) {
       .attr("class", "overlay")
       .attr("width", width)
       .attr("height", height)
-      .on("mouseover", function() { focus.style("display", null); })
-      .on("mouseout", function() { focus.style("display", "none"); })
+      .on("mouseover", function() { focusa.style("display", null); })
+      .on("mouseout", function() { focusa.style("display", "none"); })
       .on("mousemove", mousemove);
 
   function mousemove() {
@@ -154,9 +179,13 @@ d3.csv("data-datasets.csv", function(error, data) {
         d0 = data[i - 1],
         d1 = data[i],
         d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-    focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-    focus.select("text").text(formatShowValues(d.close) + " " );
+    focusa.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
+    focusa.select("text").text(formatShowValues(d.close) + " " );
   }
 });
 
 </script>
+
+</div>
+
+</body>
