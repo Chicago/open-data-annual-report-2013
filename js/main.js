@@ -45,7 +45,7 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
 
 $(function(){
   var readytoshow = false;
-  $('<img/>').attr('src', 'img/iphone.jpg').load(function() {
+  $('<img/>').attr('src', 'img/eltrain.jpg').load(function() {
     if(readytoshow)
       $("#loading").fadeOut({duration:1000});
     readytoshow = true;
