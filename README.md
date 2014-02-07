@@ -1,24 +1,30 @@
 Chicago Open Data Annual Report 2013
 ------------------------------------
 
-The inaugural report for Chicago's open data annual report published in 2013.
+Chicago's inaugural [open data annual report](http://report.cityofchicago.org/open-data-2013/), published in 2013.
 
-The design of this report is a fork of @codeforamerica [Annual Report](http://github.com/codeforamerica/annual). Open Source helped make this possible.
+!['Screenshot of Open Data Annual Report 2013'](img/report_screenshot.png)
+
+The website that powers this report is a fork of @codeforamerica [Annual Report](http://github.com/codeforamerica/annual). Open Source helped make this possible.
 
 Install
 -------
 
-This site is build using jekyll.
+This site is build using [jekyll](http://jekyllrb.com/), a static website generator. 
+
+Jekyll is written in Ruby, so you'll need to install Ruby and download the jekyll gem in order to run the report locally.
 
     sudo gem install jekyll
 
 Run
 ---
+The following command will let you view the site on your local machine:
 
     jekyll serve
 
 Build
 -----
+Want to generate all the static files that make up the site, for upload to a web server? Just type:
 
      jekyll build
 
