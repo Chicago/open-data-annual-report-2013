@@ -5,7 +5,7 @@ Chicago's inaugural [open data annual report](http://report.cityofchicago.org/op
 
 !['Screenshot of Open Data Annual Report 2013'](img/report_screenshot.png)
 
-The website that powers this report is a fork of @codeforamerica [Annual Report](http://github.com/codeforamerica/annual). Open Source helped make this possible.
+The website that powers this report is a fork of @codeforamerica [Annual Report](http://github.com/codeforamerica/annual). Open Source helped make this possible!
 
 Install
 -------
