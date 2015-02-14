@@ -1,6 +1,8 @@
 Chicago Open Data Annual Report 2013
 ------------------------------------
 
+[![DOI](https://zenodo.org/badge/10063/Chicago/open-data-annual-report-2013.svg)](http://dx.doi.org/10.5281/zenodo.15134)
+
 Chicago's inaugural [open data annual report](http://report.cityofchicago.org/open-data-2013/), published in 2013.
 
 !['Screenshot of Open Data Annual Report 2013'](img/report_screenshot.png)
